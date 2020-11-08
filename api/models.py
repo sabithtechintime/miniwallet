@@ -1,6 +1,8 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 class CustomUser(AbstractUser):
@@ -41,3 +43,19 @@ class Transaction(models.Model):
     transaction_date = models.DateTimeField(auto_now_add=True)
     transaction_type = models.CharField(max_length=100, choices=TRANSACTION_TYPE, default=DEPOSIT)
     transaction_status = models.CharField(max_length=100, choices=TRANSACTION_STATUS, default=PENDING)
+
+
+
+@receiver(post_save,sender=Transaction)
+def tansactionCreated(sender,instance,created,**kwargs):
+    if created:
+        if instance.transaction_type == Transaction.DEPOSIT:
+            ob = Wallet.objects.get(user=instance.user)
+            ob.balance = ob.balance + instance.amount
+            ob.save()
+        elif instance.transaction_type == Transaction.WITHDRAW:
+            ob = Wallet.objects.get(user=instance.user)
+            ob.balance = ob.balance - instance.amount
+            ob.save()
+        else:
+            pass
