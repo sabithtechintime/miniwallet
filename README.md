@@ -11,12 +11,14 @@ for osx users
 
 activate and install requirements.txt
 
-    pip install requirement.txt
+    pip install -r requirement.txt
 
 run 
      python manage.py migrate
 
 load dump form dbfinal.json / create super user and add one/two users and note down the id from backend
+     
+     python manage.py loaddata dbfinal.json
 
 if loaded from dumb you can use token corresponding to user
 
