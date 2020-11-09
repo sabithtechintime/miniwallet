@@ -1,16 +1,14 @@
-from django.shortcuts import render,HttpResponse
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.db import transaction
 from api.serializers import CustomAuthTokenSerializer, WalletEnableSerializer, \
     WalletDisableSerializer, TransactionSerializer
 from api.models import Wallet, Transaction
 
 import datetime
-
-# Create your views here.
 
 
 class HasWallet(IsAuthenticated):
@@ -102,6 +100,7 @@ class WalletDeposit(APIView):
     permission_classes = (IsAuthenticated, HasWallet,)
     serializer_class = TransactionSerializer
 
+    @transaction.atomic
     def post(self, request):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
@@ -129,6 +128,7 @@ class WalletWithdraw(APIView):
     permission_classes = (IsAuthenticated,HasWallet, )
     serializer_class = TransactionSerializer
 
+    @transaction.atomic
     def post(self, request):
 
         serializer = self.serializer_class(data=request.data,

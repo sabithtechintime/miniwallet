@@ -9,4 +9,3 @@ class CustomUserAdmin(admin.ModelAdmin):
 
 admin.site.register(Wallet)
 admin.site.register(Transaction)
-# admin.site.register(CustomUser)
